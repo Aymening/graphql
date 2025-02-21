@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>JWT Authentication</title>
+</head>
+
+<body>
+
+    <div class="dashboard">
+        <div class="section" id="section1"></div>
+        <div class="section" id="section2"></div>
+        <!-- <div class="section" id="section3"></div> -->
+        <!-- <div class="section" id="section4"></div>  -->
+    </div>
+
+    <!-- <button onclick="logout()" id="logoutBtn" style="display: none;">logout</button> -->
+
+    <div class="login">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Username or Email">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="login()">Login</button>
+    </div>
+    <div class="firstnamee">
+        <h1 id="firstName">
+        </h1>
+    </div>
+
+    <!-- <p id="jwtToken"></p> -->
+
+
+    <script>
+        // function logout() {
+        //     // localStorage.removeItem('jwt')
+        //     // document.getElementById('logoutBtn').style.display = "none"
+
+        //     alert('you have been logged out succecfully, see yaa!')
+        // }
+        // window.onload = function () {
+        //     const token = localStorage.getItem('jwt')
+        //     if (token) {
+        //         console.log('hh');
+
+        //         document.getElementById("logoutBtn").style.display = "block"
+        //         document.addEventListener('click', () => {
+        //             localStorage.removeItem('jwt')
+        //         })
+        //         document.getElementById("logoutBtn").style.display = "none"
+        //     }
+        // }
+        // check if already logged in
+        // window.onload = function () {
+        //     const token = localStorage.getItem("jwt");
+        //     // console.log('this is the logout jwt', token);
+
+        //     if (token) {
+        //         // document.getElementById("jwtToken").innerText = `JWT: ${token}`;
+        //         document.getElementById("logoutBtn").style.display = "block";
+        //         // console.log('frfr');
+
+        //     }
+        // }
+        // let token 
+
+        function login() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            if (!username || !password) {
+                alert("Please enter username/email and password.");
+                return;
+            }
+
+            // Encode credentials to Base64
+            const credentials = btoa(`${username}:${password}`);
+
+            fetch("https://learn.zone01oujda.ma/api/auth/signin", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Basic ${credentials}`,
+                    "Content-Type": "application/json"
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // console.log("API Response:", data);
+                    // console.log(typeof data);
+                    localStorage.setItem("jwt", data)
+
+                    // document.getElementById("jwtToken").innerText = `JWT: ${data}`;
+                    //    let token = data
+                    // console.log('token',token);
+
+
+
+                    // Check for JWT in response
+                    // if (data.token) {
+                    //     // document.getElementById("jwtToken").innerText = `JWT: ${data.token}`;
+                    //     console.log("JWT:", data.token);
+                    // } else {
+                    //     // document.getElementById("jwtToken").innerText = "JWT Not Found";
+                    //     console.error("JWT not found in response");
+                    // }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("Login failed. Check your credentials.");
+                });
+
+            getProfile()
+
+            // getitem part*******************************
+            // console.log(localStorage.getItem('jwt'));
+
+
+        }
+        let dataa
+
+        function getProfile() {
+            fetch('https://learn.zone01oujda.ma/api/graphql-engine/v1/graphql', {
+
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    query: `{
+      user {
+      firstName
+      lastName
+      auditRatio
+      transactions(
+        where: { type: { _like: "skill_%" } }
+        order_by: { amount: desc }
+      ) {
+        id
+        type
+        amount
+      }
+    }
+  
+  transaction(
+    where: {
+      _and: [
+        { type: { _eq: "xp" } }
+        { eventId: { _eq: 41 } }
+      ]
+    }
+  ) {
+    type
+    amount
+    path
+    createdAt
+    eventId
+    object {
+      type
+      name
+    }
+
+  }
+}`
+                })
+            }
+            )
+                .then(response => response.json())
+                .then(data => {
+                    dataa = data
+                    let fn = document.getElementById('firstName')
+                    console.log(data.data.user[0]);
+                    // console.log(fn);
+                    // console.log(dataa.data.user);
+                    fn.textContent = `Welcome, ${dataa.data.user[0].firstName} ${dataa.data.user[0].lastName}`
+                    document.getElementById('section1').textContent = `Audit Ratio: ${Math.round(dataa.data.user[0].auditRatio)}`
+                    // console.log(dataa.data.user[0].auditRatio);
+                    
+
+
+
+
+                    // console.log(dataa);
+
+                })
+                .catch(e => {
+                    console.log(e);
+
+                })
+        }
+    </script>
+
+</body>
+
+</html>
