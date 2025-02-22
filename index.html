@@ -9,20 +9,25 @@
 </head>
 
 <body>
-    <div class="firstnamee">
-        <h1 id="firstName">
-        </h1>
-    </div>
+   
 
-    <div class="login">
+    <div class="login" id="loginDiv">
         <h2>Login</h2>
         <input type="text" id="username" placeholder="Username or Email">
         <input type="password" id="password" placeholder="Password">
         <button onclick="login()">Login</button>
     </div>
 
+    <button id="logout-btn" onclick="logoutUser()">Logout</button>
+
+
+    <div class="firstnamee">
+        <h2 id="firstName">
+        </h2>
+    </div>
+
     <!-- <h3>XP progression:</h3> -->
-    <div class="dashboard">
+    <div class="dashboard" id="dashboard">
         <div class="section" id="section1"></div>
         <div class="section" id="section2"></div>
         <div class="section" id="section3"></div>
