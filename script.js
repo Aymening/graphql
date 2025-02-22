@@ -104,6 +104,10 @@ function createXPProgressionGraph(containerId, data) {
         svg.setAttribute("height", "100%");
         svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
         svg.style.backgroundColor = "#1a1a1a";
+        // let title = document.createElement('h2')
+        // title.textContent = "XP Prog"
+        // title.className = "progxp"
+        // container.appendChild(title)
         container.appendChild(svg);
         
         // Process data
@@ -183,6 +187,7 @@ function login() {
     getProfile();
 }
 
+
 function getProfile() {
     fetch("https://learn.zone01oujda.ma/api/graphql-engine/v1/graphql", {
         method: "POST",
@@ -197,8 +202,9 @@ function getProfile() {
                     lastName
                     auditRatio
                     transactions(
-                        where: { type: { _like: "skill_%" } }
-                        order_by: { amount: desc }
+                     where: {type: {_like: "skill_%"}}
+                     distinct_on: [type]
+                    order_by: [{type: asc}, {amount: desc}]
                     ) {
                         id
                         type
@@ -230,7 +236,7 @@ function getProfile() {
     .then(data => {
         const user = data.data.user[0];
         const transaction = data.data.transaction;
-        console.log(data);
+        // console.log(data);
         
         if (!user) return;
 
@@ -247,8 +253,77 @@ function getProfile() {
         createXPProgressionGraph('section2', {
             transaction: data.data.transaction
         });
+
+        // setup skills graph **************************************
+
+        function createBarChart(skills, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = ""; // Clear previous content
+        
+            const width = 400; // SVG width
+            const height = 200; // SVG height
+            const barWidth = 50; // Width of each bar
+            const gap = 10; // Space between bars
+        
+            let maxAmount = Math.max(...skills.map(skill => skill.amount)); // Get max value
+        
+            // Create SVG element
+            let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svg.setAttribute("width", width);
+            svg.setAttribute("height", height);
+        
+            skills.forEach((skill, index) => {
+                let barHeight = (skill.amount / maxAmount) * (height - 20); // Scale height
+        
+                // Create bar (rectangle)
+                let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                rect.setAttribute("x", index * (barWidth + gap));
+                rect.setAttribute("y", height - barHeight);
+                rect.setAttribute("width", barWidth);
+                rect.setAttribute("height", barHeight);
+                rect.setAttribute("fill", "#888"); // Bar color
+        
+                // Create text label for amount
+                let amountText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                amountText.setAttribute("x", index * (barWidth + gap) + barWidth / 2);
+                amountText.setAttribute("y", height - barHeight - 5);
+                amountText.setAttribute("text-anchor", "middle");
+                amountText.setAttribute("fill", "#fff");
+                amountText.textContent = skill.amount;
+        
+                // Create text label for skill type
+                let typeText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                typeText.setAttribute("x", index * (barWidth + gap) + barWidth / 2);
+                typeText.setAttribute("y", height + 15);
+                typeText.setAttribute("text-anchor", "middle");
+                typeText.setAttribute("fill", "#fff");
+                typeText.setAttribute("font-size", "10");
+                typeText.textContent = skill.type;
+        
+                // Append elements to SVG
+                svg.appendChild(rect);
+                svg.appendChild(amountText);
+                svg.appendChild(typeText);
+            });
+        
+            // Append SVG to container
+            container.appendChild(svg);
+        }
+        
+        // skills*****************
+        let skills
+        skills = data.data.user[0].transactions.sort((a, b) => b.amount - a.amount).slice(0, 6)
+        console.log(skills[0].type);
+        createBarChart(skills, "section4");
+
+        // skills.map(e => console.log(e.type, e.amount))
+        // console.log(skills);
     })
     .catch(error => console.log(error));
+
+
+
+
 }
 
 // function getProfile() {
