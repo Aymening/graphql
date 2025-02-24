@@ -9,25 +9,21 @@
 </head>
 
 <body>
-    <!-- <div class="modal-content">
-        <h2>Login</h2>
-        <div>
-            <input id="username" type="text" placeholder="Username" required>
-            <input id="password" type="password" placeholder="Password" required>
-            <button onclick="login()">Login</button>
-        </div>
-    </div> -->
-
     <div class="header-info">
-        <h1> Welcome : </h1>
-        <h1 id="first_name"></h1>
-        <h1 id="last_name"></h1>
+        <div class="user-names">
+            <h1>Welcome,</h1>
+            <h1 id="first_name"></h1>
+            <h1 id="last_name"></h1>
+        </div>
+        <button id="logout" onclick="logout()">Logout</button>
     </div>
 
     <div class="dashboard" id="dashboard">
         <div class="section" id="section1">
-            <h1>Audit Ratio</h1>
-            <h2 id="audits"></h2>
+            <div class="audit-container">
+                <h1>Audit Ratio</h1>
+                <h2 id="audits"></h2>
+            </div>
         </div>
         <div class="section" id="section2">
             <h1>Progresse</h1>
@@ -41,7 +37,6 @@
         </div>
 
         <div class="section" id="section4">
-
             <div id="skills"></div>
         </div>
     </div>
@@ -49,7 +44,7 @@
     <script>
 
 
-        function intrastatus() {
+        function statuss() {
             const afterGet = localStorage.getItem('jwt');
             fetch("https://learn.zone01oujda.ma/api/graphql-engine/v1/graphql", {
                 method: "POST",
@@ -95,51 +90,52 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    // Update user info
                     document.getElementById('first_name').textContent = data.data.user[0].firstName;
                     document.getElementById('last_name').textContent = data.data.user[0].lastName;
 
-                    // Update audit ratio
-                    const auditRatio = data.data.user[0].auditRatio.toFixed(2);
+                    const auditRatio = data.data.user[0].auditRatio.toFixed(1);
                     document.getElementById('audits').textContent = `${auditRatio}`;
 
-                    // Calculate and update total XP
                     const xpTransaction = data.data.transaction.reduce((accu, curr) => accu + curr.amount, 0);
                     const xpFormatted = (xpTransaction * 0.001).toFixed(0);
-                    document.getElementById('xp').textContent = xpFormatted;
+                    document.getElementById('xp').textContent = `${xpFormatted} Kb`;
 
-                    // Create XP progression graph
                     createXPProgressionGraph('containerId', {
                         transaction: data.data.transaction
                     });
                     function createBarChart(skills, containerId) {
                         const container = document.getElementById(containerId);
-                        container.innerHTML = ""; // Clear previous content
+                        container.innerHTML = "";
 
-                        const width = 400; // SVG width
-                        const height = 200; // SVG height
-                        const barWidth = 50; // Width of each bar
-                        const gap = 10; // Space between bars
+                        const width = 400;
+                        const height = 200;
+                        const barWidth = 50;
+                        const gap = 10;
 
-                        let maxAmount = Math.max(...skills.map(skill => skill.amount)); // Get max value
+                        let maxAmount = Math.max(...skills.map(skill => skill.amount));
 
-                        // Create SVG element
                         let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
                         svg.setAttribute("width", width);
                         svg.setAttribute("height", height);
 
-                        skills.forEach((skill, index) => {
-                            let barHeight = (skill.amount / maxAmount) * (height - 20); // Scale height
+                        let tooltip = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                        tooltip.setAttribute("visibility", "hidden");
+                        tooltip.setAttribute("text-anchor", "middle");
+                        tooltip.setAttribute("fill", "#fff");
+                        tooltip.setAttribute("font-size", "12");
+                        tooltip.setAttribute("font-weight", "bold");
 
-                            // Create bar (rectangle)
+                        skills.forEach((skill, index) => {
+                            let barHeight = (skill.amount / maxAmount) * (height - 20);
+
                             let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
                             rect.setAttribute("x", index * (barWidth + gap));
                             rect.setAttribute("y", height - barHeight);
                             rect.setAttribute("width", barWidth);
                             rect.setAttribute("height", barHeight);
-                            rect.setAttribute("fill", "#888"); // Bar color
+                            rect.setAttribute("fill", "#888");
+                            rect.style.cursor = "pointer";
 
-                            // Create text label for amount
                             let amountText = document.createElementNS("http://www.w3.org/2000/svg", "text");
                             amountText.setAttribute("x", index * (barWidth + gap) + barWidth / 2);
                             amountText.setAttribute("y", height - barHeight - 5);
@@ -147,7 +143,6 @@
                             amountText.setAttribute("fill", "#fff");
                             amountText.textContent = skill.amount;
 
-                            // Create text label for skill type
                             let typeText = document.createElementNS("http://www.w3.org/2000/svg", "text");
                             typeText.setAttribute("x", index * (barWidth + gap) + barWidth / 2);
                             typeText.setAttribute("y", height + 15);
@@ -156,24 +151,104 @@
                             typeText.setAttribute("font-size", "10");
                             typeText.textContent = skill.type;
 
+                            rect.addEventListener("mouseover", function () {
+                                tooltip.textContent = skill.type;
+                                console.log(skill.type);
 
+                                tooltip.setAttribute("x", index * (barWidth + gap) + barWidth / 2);
+                                // tooltip.setAttribute("y", height - barHeight - 40);
+                                tooltip.setAttribute("y", Math.max(150, height - barHeight - 50));
 
-                            // Append elements to SVG
+                                tooltip.setAttribute("visibility", "visible");
+                            });
+
+                            rect.addEventListener("mouseout", function () {
+                                tooltip.setAttribute("visibility", "hidden");
+                            });
+
                             svg.appendChild(rect);
                             svg.appendChild(amountText);
-                            svg.appendChild(typeText);
+                            // svg.appendChild(typeText);
                         });
 
-                        // Append SVG to container
-                        container.innerHTML = "<h1> Skills </h1>"
+                        svg.appendChild(tooltip);
+                        container.innerHTML = "<h1> Skills </h1><br>";
                         container.appendChild(svg);
                     }
 
-                    // skills*****************
-                    let skills
-                    skills = data.data.user[0].transactions.sort((a, b) => b.amount - a.amount).slice(0, 6)
-                    // console.log(skills[0].type);
+                    // barchart function *************************************************************************************************
+                    // function createBarChart(skills, containerId) {
+                    //     const container = document.getElementById(containerId);
+                    //     container.innerHTML = ""
 
+                    //     const width = 400;
+                    //     const height = 200;
+                    //     const barWidth = 50;
+                    //     const gap = 10
+
+                    //     let maxAmount = Math.max(...skills.map(skill => skill.amount));
+
+                    //     let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                    //     svg.setAttribute("width", width);
+                    //     svg.setAttribute("height", height);
+
+                    //     skills.forEach((skill, index) => {
+                    //         let barHeight = (skill.amount / maxAmount) * (height - 20);
+
+                    //         let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                    //         rect.setAttribute("x", index * (barWidth + gap));
+                    //         rect.setAttribute("y", height - barHeight);
+                    //         rect.setAttribute("width", barWidth);
+                    //         rect.setAttribute("height", barHeight);
+                    //         rect.setAttribute("fill", "#888")
+
+                    //         let amountText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                    //         amountText.setAttribute("x", index * (barWidth + gap) + barWidth / 2);
+                    //         amountText.setAttribute("y", height - barHeight - 5);
+                    //         amountText.setAttribute("text-anchor", "middle");
+                    //         amountText.setAttribute("fill", "#fff");
+                    //         amountText.textContent = skill.amount;
+
+                    //         let typeText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                    //         typeText.setAttribute("x", index * (barWidth + gap) + barWidth / 2);
+                    //         typeText.setAttribute("y", height + 15);
+                    //         typeText.setAttribute("text-anchor", "middle");
+                    //         typeText.setAttribute("fill", "#fff");
+                    //         typeText.setAttribute("font-size", "10");
+                    //         // typeText.textContent = skill.type;
+
+                    //         svg.appendChild(rect);
+                    //         svg.appendChild(amountText);
+                    //         svg.appendChild(typeText);
+                    //     });
+
+                    //     container.innerHTML = "<h1> Skills </h1>"
+                    //     container.appendChild(svg);
+                    // }
+
+
+                    const skillTypes = [
+                        'skill_prog',
+                        'skill_go',
+                        'skill_front-end',
+                        'skill_back-end',
+                        'skill_js'
+                    ];
+                    let skills = {}
+
+                    data.data.user[0].transactions.forEach(transaction => {
+                        if (skillTypes.includes(transaction.type)) {
+                            if (!skills[transaction.type] || transaction.amount > skills[transaction.type].amount) {
+                                skills[transaction.type] = transaction;
+                            }
+                        }
+                    });
+
+                    skills = Object.values(skills);
+                    console.log(skills);
+
+
+                    console.log(data.data.user[0].transactions);
                     createBarChart(skills, "section4");
 
 
@@ -184,7 +259,6 @@
                 });
         }
 
-        // Your existing createXPProgressionGraph function remains the same
         function createXPProgressionGraph(containerId, data) {
             const container = document.getElementById(containerId);
             const margin = { top: 50, right: 60, bottom: 40, left: 60 };
@@ -278,42 +352,31 @@
             }
 
             function render() {
-                // Clear container
                 container.innerHTML = '';
 
-                // Get dimensions
                 const width = container.getBoundingClientRect().width;
                 const height = container.getBoundingClientRect().height || 200;
 
-                // Create SVG
                 const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
                 svg.setAttribute("width", "100%");
                 svg.setAttribute("height", "100%");
                 svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
-                svg.style.backgroundColor = "#1a1a1a";
-                // let title = document.createElement('h2')
-                // title.textContent = "XP Prog"
-                // title.className = "progxp"
-                // container.appendChild(title)
+                svg.style.backgroundColor = "#000000";
                 container.appendChild(svg);
 
-                // Process data
                 const processedData = processData(data);
                 const { xScale, yScale } = createScales(processedData, width, height);
 
-                // Create tooltip if it doesn't exist
                 if (!tooltip) {
                     tooltip = createTooltip();
                 }
 
-                // Create line path
                 const pathData = processedData.map((point, index) => {
                     const x = xScale(point.date);
                     const y = yScale(point.totalXP);
                     return `${index === 0 ? 'M' : 'L'} ${x} ${y}`;
                 }).join(' ');
 
-                // Add line
                 const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
                 path.setAttribute("d", pathData);
                 path.setAttribute("stroke", "#808080");
@@ -321,7 +384,6 @@
                 path.setAttribute("fill", "none");
                 svg.appendChild(path);
 
-                // Add points
                 processedData.forEach(point => {
                     const x = xScale(point.date);
                     const y = yScale(point.totalXP);
@@ -329,10 +391,8 @@
                 });
             }
 
-            // Initial render
             render();
 
-            // Return function to handle updates
             return {
                 update: (newData) => {
                     data = newData;
@@ -340,10 +400,12 @@
                 }
             };
         }
-        console.log('*****');
-        intrastatus();
-        console.log('*****');
+        statuss();
 
+        function logout() {
+            localStorage.removeItem('jwt')
+            window.location.href = 'login.html'
+        }
     </script>
 </body>
 

@@ -23,41 +23,43 @@
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
             if (!username || !password) {
-                alert("Plase enter username/email and ");
+                alert("Please enter username or email ");
                 return;
             }
-            const credentials = btoa(`${username}:${password}`);
-            console.log(credentials, '**********');
+            // const credentials = btoa(`${username}:${password}`);
             fetch("https://learn.zone01oujda.ma/api/auth/signin", {
                 method: "POST",
                 headers: {
-                    "Authorization": `Basic ${credentials}`,
+                    "Authorization": `Basic ${btoa(`${username}:${password}`)}`,
                     "Content-Type": "application/json"
                 }
             })
-                .then(response => response.json())
+                .then(response => {
+                    if (response.ok) {
+                        return response.json()
+                    } else {
+                        alert('incorrect username or password!')
+                        window.location.href = "login.html"
+                        return Promise.reject('Invalid credentials'); //This stops further .then() blocks from running when the credentials are invalid
+                    }
+                })
                 .then(data => {
                     localStorage.setItem("jwt", data);
-                    //handel error of psword inccorect. 
-                    //intrastatus();  
-                    window.location.href = "index.html"
+                    window.location.href = "home.html"
                 })
-
                 .catch(error => {
                     console.error("Error:", error);
                 });
         }
         document.addEventListener("DOMContentLoaded", function () {
-            // Selecting the input fields for the keydown event
             const usernameField = document.getElementById("username");
             const passwordField = document.getElementById("password");
-            // Listen for the "Enter" key press in the inputs
             usernameField.addEventListener("keydown", handleEnterKey);
             passwordField.addEventListener("keydown", handleEnterKey);
             function handleEnterKey(event) {
                 if (event.key === "Enter") {
-                    event.preventDefault();  // Prevent form submission on Enter
-                    login();  // Call the login function when Enter is pressed
+                    event.preventDefault();
+                    login();
                 }
             }
         });

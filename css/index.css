@@ -5,6 +5,7 @@ body {
     margin: 0;
     padding: 20px;
 }
+
 h1,
 h2 {
     color: whitesmoke;
@@ -57,6 +58,50 @@ button:hover {
     background-color: #357ab8;
 }
 
+/* #logout {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: auto;
+    margin-left: 48rem;
+} */
+
+.header-info .user-names {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+
+.header-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    color: #4a4a4a;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+
+#logout {
+    background-color: #6d6d6d;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: auto;
+    padding: 8px 16px;
+    border-radius: 4px;
+}
+
+#logout:hover {
+    background-color: #2b2b2c;
+}
+
+
 #containerId {
     width: 100%;
     height: 200px;
@@ -72,4 +117,43 @@ button:hover {
     color: #4a4a4a;
     font-weight: bold;
     font-size: 1.2rem;
+}
+
+#xp_time_project {
+    display: flex;
+    flex-direction: column; /* Stack h2 and h1 vertically */
+    justify-content: center; /* Vertical centering */
+    align-items: center;     /* Horizontal centering */
+    height: 100%;            /* Ensure it takes the full height of the parent */
+}
+
+#xp_time_project h2 {
+    margin-bottom: 10px;     /* Space between Total XP and the XP value */
+    color: #4a4a4a;
+    font-size: 1.5rem;
+}
+
+#xp_time_project h1 {
+    font-size: 3rem;
+    color: #4a90e2;
+}
+
+
+.audit-container {
+    display: flex;
+    flex-direction: column; /* Stack h1 and h2 vertically */
+    justify-content: center; /* Vertical centering */
+    align-items: center;     /* Horizontal centering */
+    height: 100%;            /* Takes full height of the parent section */
+}
+
+.audit-container h1 {
+    margin-bottom: 10px;     /* Space between Audit Ratio and the value */
+    color: #4a4a4a;
+    font-size: 1.5rem;
+}
+
+.audit-container h2 {
+    font-size: 3rem;
+    color: #4a90e2;
 }
