@@ -45,11 +45,10 @@
 
 
         function statuss() {
-            const afterGet = localStorage.getItem('jwt');
             fetch("https://learn.zone01oujda.ma/api/graphql-engine/v1/graphql", {
                 method: "POST",
                 headers: {
-                    "Authorization": `Bearer ${afterGet}`,
+                    "Authorization": `Bearer ${localStorage.getItem('jwt')}`,
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
@@ -88,8 +87,33 @@
                     }`
                 })
             })
-                .then(response => response.json())
+                .then(response => {
+                    if (response.ok) {
+                        console.log('response ok');
+
+                        return response.json()
+                    } else {
+                        console.log('response not ok');
+                        alert('incorrect jwt')
+                        window.location.href = "login.html"
+                        return Promise.reject('invalid jwt'); //This stops further .then() blocks from running when the credentials are invalid
+                    }
+
+                })
                 .then(data => {
+                    console.log(data);
+
+                    // console.log(data.errors[0].extensions.code);
+                    // if (data.errors[0].extensions.code === "invalid-jwt") {
+                    //     window.location.href = "index.html"
+                    // }       
+
+                    if (data && typeof data === "object" && "errors" in data) {
+                        window.location.href = "index.html";
+                    }
+
+
+
                     document.getElementById('first_name').textContent = data.data.user[0].firstName;
                     document.getElementById('last_name').textContent = data.data.user[0].lastName;
 
@@ -175,58 +199,6 @@
                         container.innerHTML = "<h1> Skills </h1><br>";
                         container.appendChild(svg);
                     }
-
-                    // barchart function *************************************************************************************************
-                    // function createBarChart(skills, containerId) {
-                    //     const container = document.getElementById(containerId);
-                    //     container.innerHTML = ""
-
-                    //     const width = 400;
-                    //     const height = 200;
-                    //     const barWidth = 50;
-                    //     const gap = 10
-
-                    //     let maxAmount = Math.max(...skills.map(skill => skill.amount));
-
-                    //     let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-                    //     svg.setAttribute("width", width);
-                    //     svg.setAttribute("height", height);
-
-                    //     skills.forEach((skill, index) => {
-                    //         let barHeight = (skill.amount / maxAmount) * (height - 20);
-
-                    //         let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-                    //         rect.setAttribute("x", index * (barWidth + gap));
-                    //         rect.setAttribute("y", height - barHeight);
-                    //         rect.setAttribute("width", barWidth);
-                    //         rect.setAttribute("height", barHeight);
-                    //         rect.setAttribute("fill", "#888")
-
-                    //         let amountText = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                    //         amountText.setAttribute("x", index * (barWidth + gap) + barWidth / 2);
-                    //         amountText.setAttribute("y", height - barHeight - 5);
-                    //         amountText.setAttribute("text-anchor", "middle");
-                    //         amountText.setAttribute("fill", "#fff");
-                    //         amountText.textContent = skill.amount;
-
-                    //         let typeText = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                    //         typeText.setAttribute("x", index * (barWidth + gap) + barWidth / 2);
-                    //         typeText.setAttribute("y", height + 15);
-                    //         typeText.setAttribute("text-anchor", "middle");
-                    //         typeText.setAttribute("fill", "#fff");
-                    //         typeText.setAttribute("font-size", "10");
-                    //         // typeText.textContent = skill.type;
-
-                    //         svg.appendChild(rect);
-                    //         svg.appendChild(amountText);
-                    //         svg.appendChild(typeText);
-                    //     });
-
-                    //     container.innerHTML = "<h1> Skills </h1>"
-                    //     container.appendChild(svg);
-                    // }
-
-
                     const skillTypes = [
                         'skill_prog',
                         'skill_go',
@@ -258,6 +230,16 @@
                     console.error("Error:", error);
                 });
         }
+
+
+        // check data in refreche***********************************
+        document.addEventListener("DOMContentLoaded", function () {
+            const token = localStorage.getItem('jwt')
+            if (!token) {
+                window.location.href = 'index.html'
+            }
+        })
+
 
         function createXPProgressionGraph(containerId, data) {
             const container = document.getElementById(containerId);
@@ -400,7 +382,9 @@
                 }
             };
         }
-        statuss();
+        document.addEventListener("DOMContentLoaded", function () {
+            statuss();
+        })
 
         function logout() {
             localStorage.removeItem('jwt')
