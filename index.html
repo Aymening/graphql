@@ -39,7 +39,7 @@
                         return response.json()
                     } else {
                         alert('incorrect username or password!')
-                        window.location.href = "login.html"
+                        window.location.href = "index.html"
                         return Promise.reject('Invalid credentials'); //This stops further .then() blocks from running when the credentials are invalid
                     }
                 })
