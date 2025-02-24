@@ -1,163 +1,45 @@
-/* Reset default styles */
+.modal-content {
+    background: white;
+    padding: 20px;
+    width: 300px;
+    border-radius: 8px;
+    text-align: center;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, sans-serif;
 }
-
-body {
-    background-color: #181818;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    margin: 0;
+/* user agent stylesheet */
+div {
+    display: block;
+    unicode-bidi: isolate;
+}.modal-content {
+    background: white;
     padding: 20px;
-}
-
-/* 🔹 Login Form */
-.login {
-    margin-top: 10rem;
-    background-color: #222;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    text-align: center;
     width: 300px;
-    margin-bottom: 20px;
-}
-
-.login h2 {
-    margin-bottom: 15px;
-    font-size: 1.5rem;
-}
-
-.login input {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: none;
-    border-radius: 5px;
-    background-color: #333;
-    color: white;
-}
-
-.login button {
-    width: 100%;
-    padding: 10px;
-    background-color: #ff6b6b;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    color: white;
-    font-size: 1rem;
-    transition: background 0.3s;
-}
-
-.login button:hover {
-    background-color: #ff3b3b;
-}
-
-/*  User Welcome Message */
-h2 {
-    /* margin-top: 80px; */
-    font-size: 1.5rem;
-    font-weight: bold;
+    border-radius: 8px;
     text-align: center;
 }
 
-/*  Dashboard Sections */
-.dashboard {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    width: 80%;
-    max-width: 1200px;
-    margin-top: 30px;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
-
-/* #section2 {
-    width: 100%;
-    height: 400px;
-    position: relative;
-    margin: 20px 0;
-} */
-
-/* #dashboard {
-    display: none; 
-    transition: opacity 0.3s ease-in-out;
-    pointer-events: none; 
-}
-
-#dashboard.active {
-    display: block; 
-    pointer-events: auto;
-} */
-
-.section {
-    background-color: #222;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    min-height: 150px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    height: 20rem;
-}
-
-.progxp {
-    font-size: 20px;
-    font-weight: bold;
-    color: white;
-    text-transform: uppercase;
-    display: flex; /* Align text and SVG in the same row */
-    align-items: center; /* Center vertically */
-    justify-content: left; /* Align text to the left */
-    gap: 10px; /* Space between text and SVG */
-}
-
-.hidden {
-    display: none;
-}
-
-#logout-btn {
-    margin-top: 11rem;
-    margin-bottom: 0px;
-    margin-left: 56rem;
-    padding: 10px 20px;
-    background-color: #ff4d4f;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-}
-
-#logout-btn:hover {
-    background-color: #ff7875;
-}
-
-#logout-btn:active {
-    background-color: #ff4d4f;
-    transform: scale(0.98);
+/* user agent stylesheet */
+div {
+    display: block;
+    unicode-bidi: isolate;
 }
 
 
 
-/* 🔹 Responsive Design */
-@media (max-width: 768px) {
-    .dashboard {
-        grid-template-columns: 1fr;
-        width: 90%;
-    }
-
-    .login {
-        width: 90%;
-    }
-}
+/*
+<h1 id="first_name"></h1>
+<h1 id="last_name"></h1>
+<h1 id="xp"></h1>
+<h1 id="audits" ></h1>
+<h1 id="skills" ></h1>
+*/
