@@ -4,65 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/index.css">
     <title>Dashboard</title>
-    <style>
-
-        body {
-            background-color: #fcc500;
-            color: #fff;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .modal-content {
-            margin-bottom: 20px;
-        }
-
-        .dashboard {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            grid-gap: 20px;
-            margin-top: 20px;
-        }
-
-        .section {
-            background-color: #282e2d;
-            border-radius: 8px;
-            padding: 20px;
-            min-height: 200px;
-        }
-
-        input,
-        button {
-            margin: 5px;
-            padding: 8px;
-            border-radius: 4px;
-        }
-
-        button {
-            background-color: #333;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #444;
-        }
-
-        #containerId {
-            width: 100%;
-            height: 200px;
-        }
-
-        .header-info {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            color: #282e2d;
-        }
-    </style>
 </head>
 
 <body>
@@ -76,7 +19,7 @@
     </div> -->
 
     <div class="header-info">
-       <h1>   Welcome : </h1>
+        <h1> Welcome : </h1>
         <h1 id="first_name"></h1>
         <h1 id="last_name"></h1>
     </div>
@@ -96,16 +39,15 @@
                 <h1 id="xp"></h1>
             </div>
         </div>
-       
-        <div
-         class="section" id="section4">
-            
+
+        <div class="section" id="section4">
+
             <div id="skills"></div>
         </div>
     </div>
 
     <script>
-        
+
 
         function intrastatus() {
             const afterGet = localStorage.getItem('jwt');
@@ -213,8 +155,8 @@
                             typeText.setAttribute("fill", "#fff");
                             typeText.setAttribute("font-size", "10");
                             typeText.textContent = skill.type;
-                            
-                           
+
+
 
                             // Append elements to SVG
                             svg.appendChild(rect);
@@ -231,10 +173,10 @@
                     let skills
                     skills = data.data.user[0].transactions.sort((a, b) => b.amount - a.amount).slice(0, 6)
                     // console.log(skills[0].type);
-                    
+
                     createBarChart(skills, "section4");
 
-                    
+
                 })
 
                 .catch(error => {
@@ -401,7 +343,7 @@
         console.log('*****');
         intrastatus();
         console.log('*****');
-    
+
     </script>
 </body>
 
