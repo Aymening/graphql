@@ -67,9 +67,12 @@ function statuss() {
             const auditRatio = data.data.user[0].auditRatio.toFixed(1);
             document.getElementById('audits').textContent = `${auditRatio}`;
 
+            // calculate the xp
             const xpTransaction = data.data.transaction.reduce((accu, curr) => accu + curr.amount, 0);
             const xpFormatted = (xpTransaction * 0.001).toFixed(0);
             document.getElementById('xp').textContent = `${xpFormatted} Kb`;
+
+            console.log(data);
 
             createXPProgressionGraph('containerId', {
                 transaction: data.data.transaction
@@ -203,24 +206,26 @@ function createXPProgressionGraph(containerId, data) {
 
     function createScales(processedData, width, height) {
         const dateRange = [
-            processedData[0].date,
-            processedData[processedData.length - 1].date
+            processedData[0].date, //gives the date of the first data point
+            processedData[processedData.length - 1].date //gives the date of the last data point
         ];
+        // console.log(dateRange);
+        // console.log(processedData[processedData.length - 1].date);
 
-        const xpRange = [0, processedData[processedData.length - 1].totalXP];
+
+        const xpRange = [0, processedData[processedData.length - 1].totalXP]; //gets the total XP value of the last item in the dataset
+
+        console.log(xpRange);
 
         return {
             xScale: (x) => {
                 const range = dateRange[1] - dateRange[0];
-                return ((x - dateRange[0]) / range) *
-                    (width - margin.left - margin.right) +
-                    margin.left;
+                // console.log(new Date(range));
+
+                return ((x - dateRange[0]) / range) * (width - margin.left - margin.right) + margin.left;
             },
             yScale: (y) => {
-                return height -
-                    (y / xpRange[1]) *
-                    (height - margin.top - margin.bottom) -
-                    margin.bottom;
+                return height - (y / xpRange[1]) * (height - margin.top - margin.bottom) - margin.bottom;
             }
         };
     }
@@ -289,6 +294,8 @@ function createXPProgressionGraph(containerId, data) {
         container.appendChild(svg);
 
         const processedData = processData(data);
+        console.log('processedData',processedData);
+        
         const { xScale, yScale } = createScales(processedData, width, height);
 
         if (!tooltip) {
