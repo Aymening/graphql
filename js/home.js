@@ -51,14 +51,16 @@ function statuss() {
 
         })
         .then(data => {
+            // invalid jwt case
+            if (data && typeof data === "object" && "errors" in data) {
+                window.location.href = "index.html";
+            }
+            
+            // non talents case
             if (data.data.transaction.length === 0) {
                 localStorage.removeItem('jwt')
                 window.location.href = "index.html"
             }
-            if (data && typeof data === "object" && "errors" in data) {
-                window.location.href = "index.html";
-            }
-
 
 
             document.getElementById('first_name').textContent = data.data.user[0].firstName;
@@ -72,7 +74,7 @@ function statuss() {
             const xpFormatted = (xpTransaction * 0.001).toFixed(0);
             document.getElementById('xp').textContent = `${xpFormatted} Kb`;
 
-            console.log(data);
+            // console.log(data);
 
             createXPProgressionGraph('containerId', {
                 transaction: data.data.transaction
@@ -83,7 +85,7 @@ function statuss() {
 
                 const width = 400;
                 const height = 200;
-                const barWidth = 50;
+                const barWidth = 60;
                 const gap = 10;
 
                 let maxAmount = Math.max(...skills.map(skill => skill.amount));
@@ -108,7 +110,7 @@ function statuss() {
                     rect.setAttribute("width", barWidth);
                     rect.setAttribute("height", barHeight);
                     rect.setAttribute("fill", "#888");
-                    rect.style.cursor = "pointer";
+                    // rect.style.cursor = "pointer";
 
                     let amountText = document.createElementNS("http://www.w3.org/2000/svg", "text");
                     amountText.setAttribute("x", index * (barWidth + gap) + barWidth / 2);
@@ -117,20 +119,11 @@ function statuss() {
                     amountText.setAttribute("fill", "#fff");
                     amountText.textContent = skill.amount;
 
-                    let typeText = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                    typeText.setAttribute("x", index * (barWidth + gap) + barWidth / 2);
-                    typeText.setAttribute("y", height + 15);
-                    typeText.setAttribute("text-anchor", "middle");
-                    typeText.setAttribute("fill", "#fff");
-                    typeText.setAttribute("font-size", "10");
-                    typeText.textContent = skill.type;
-
                     rect.addEventListener("mouseover", function () {
                         tooltip.textContent = skill.type;
 
                         tooltip.setAttribute("x", index * (barWidth + gap) + barWidth / 2);
                         tooltip.setAttribute("y", Math.max(150, height - barHeight - 50));
-
                         tooltip.setAttribute("visibility", "visible");
                     });
 
@@ -209,25 +202,17 @@ function createXPProgressionGraph(containerId, data) {
             processedData[0].date, //gives the date of the first data point
             processedData[processedData.length - 1].date //gives the date of the last data point
         ];
-        // console.log(dateRange);
-        // console.log(processedData[processedData.length - 1].date);
-
-
         const xpRange = [0, processedData[processedData.length - 1].totalXP]; //gets the total XP value of the last item in the dataset
 
-        // console.log(xpRange);
 
         return {
             xScale: (x) => {
-                // console.log('x',x);
 
                 const range = dateRange[1] - dateRange[0];
-                // console.log(new Date(range));
 
                 return ((x - dateRange[0]) / range) * (width - margin.left - margin.right) + margin.left;
             },
             yScale: (y) => {
-                // console.log('y',y);
 
                 return height - (y / xpRange[1]) * (height - margin.top - margin.bottom) - margin.bottom;
             }
@@ -306,19 +291,21 @@ function createXPProgressionGraph(containerId, data) {
             tooltip = createTooltip();
         }
 
+        // draw the line
         const pathData = processedData.map((point, index) => {
             const x = xScale(point.date);
             const y = yScale(point.totalXP);
-            return `${index === 0 ? 'M' : 'L'} ${x} ${y}`;
+            return `${index === 0 ? 'M' : 'L'} ${x} ${y}`; //M (Move) for the first point and L (Line) for the rest
         }).join(' ');
 
         const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        path.setAttribute("d", pathData);
+        path.setAttribute("d", pathData); //d data
         path.setAttribute("stroke", "#808080");
         path.setAttribute("stroke-width", "2");
         path.setAttribute("fill", "none");
         svg.appendChild(path);
 
+        // create points
         processedData.forEach(point => {
             const x = xScale(point.date);
             const y = yScale(point.totalXP);
@@ -328,12 +315,12 @@ function createXPProgressionGraph(containerId, data) {
 
     render();
 
-    return {
-        update: (newData) => {
-            data = newData;
-            render();
-        }
-    };
+    // return {
+    //     update: (newData) => {
+    //         data = newData;
+    //         render();
+    //     }
+    // };
 }
 document.addEventListener("DOMContentLoaded", function () {
     statuss();

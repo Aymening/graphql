@@ -30,8 +30,6 @@ function login() {
         });
 }
 
-
-
 // this is just when user clicked enter it will try to loggin
 document.addEventListener("DOMContentLoaded", function () {
     const usernameField = document.getElementById("username");
