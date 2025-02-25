@@ -2,7 +2,7 @@ function login() {
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
     if (!username || !password) {
-        alert("Please enter username or email ");
+        alert("Please enter username and password! ");
         return;
     }
     fetch("https://learn.zone01oujda.ma/api/auth/signin", {
@@ -29,6 +29,10 @@ function login() {
             console.error("Error:", error);
         });
 }
+
+
+
+// this is just when user clicked enter it will try to loggin
 document.addEventListener("DOMContentLoaded", function () {
     const usernameField = document.getElementById("username");
     const passwordField = document.getElementById("password");

@@ -5,7 +5,7 @@ function statuss() {
             "Authorization": `Bearer ${localStorage.getItem('jwt')}`,
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({
+        body: JSON.stringify({ // "{\"query\":\"{ user { firstName } }\"}"
             query: `{
                 user {
                     firstName
