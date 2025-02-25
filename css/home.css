@@ -138,3 +138,16 @@ button:hover {
     font-size: 3rem;
     color: #4a90e2;
 }
+
+
+@media (max-width: 768px) {
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .dashboard {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
