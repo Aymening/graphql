@@ -215,16 +215,20 @@ function createXPProgressionGraph(containerId, data) {
 
         const xpRange = [0, processedData[processedData.length - 1].totalXP]; //gets the total XP value of the last item in the dataset
 
-        console.log(xpRange);
+        // console.log(xpRange);
 
         return {
             xScale: (x) => {
+                // console.log('x',x);
+
                 const range = dateRange[1] - dateRange[0];
                 // console.log(new Date(range));
 
                 return ((x - dateRange[0]) / range) * (width - margin.left - margin.right) + margin.left;
             },
             yScale: (y) => {
+                // console.log('y',y);
+
                 return height - (y / xpRange[1]) * (height - margin.top - margin.bottom) - margin.bottom;
             }
         };
@@ -255,7 +259,7 @@ function createXPProgressionGraph(containerId, data) {
         circle.setAttribute("r", "4");
         circle.setAttribute("fill", "#808080");
 
-        circle.addEventListener('mouseover', (e) => {
+        circle.addEventListener('mouseover', () => {
             circle.setAttribute("r", "6");
             circle.setAttribute("fill", "#ffffff");
 
@@ -294,8 +298,8 @@ function createXPProgressionGraph(containerId, data) {
         container.appendChild(svg);
 
         const processedData = processData(data);
-        console.log('processedData',processedData);
-        
+        console.log('processedData', processedData);
+
         const { xScale, yScale } = createScales(processedData, width, height);
 
         if (!tooltip) {
