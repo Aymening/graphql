@@ -283,7 +283,7 @@ function createXPProgressionGraph(containerId, data) {
         container.appendChild(svg);
 
         const processedData = processData(data);
-        console.log('processedData', processedData);
+        // console.log('processedData', processedData);
 
         const { xScale, yScale } = createScales(processedData, width, height);
 
